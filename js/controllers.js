@@ -56,18 +56,11 @@ app.controller("recoveryController", function($rootScope, $scope, recoveryServic
     try {
       wallet = recoveryServices.getWallet(inputs, m, n, network);
     } catch (ex) {
-      $("#myModal").modal('hide');
       return showMessage(ex.message, 3);
     }
     showMessage('Scanning funds...', 1);
 
-    var reportFn = function(data) {
-      console.log('Report:', data);
-    };
-
-    var gap = +($("#gap").val());
-    gap = lodash.isNumber(gap) ? gap : 20;
-    recoveryServices.scanWallet(wallet, gap, reportFn, function(err, res) {
+    recoveryServices.scanWallet(wallet, $scope.gap || 20,  function(err, res) {
       scanResults = res;
       if (err)
         return showMessage(err, 3);
@@ -82,7 +75,7 @@ app.controller("recoveryController", function($rootScope, $scope, recoveryServic
       if ((scanResults.balance - fee) > 0)
         $scope.totalBalance = "Available balance: " + scanResults.balance.toFixed(8) + " BTC";
       else
-        $scope.totalBalance = "Available balance: " + scanResults.balance.toFixed(8) + " BTC. Insufficents funds.";
+        $scope.totalBalance = "Available balance: " + scanResults.balance.toFixed(8) + " BTC. Insufficents to make a transaction.";
     });
   }
 
